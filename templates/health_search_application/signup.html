@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+	<head>
+		<title>Sign up</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="searchapp.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	</head>
+		
+	<body>
+		<h1 align="center">WELCOME TO</h1>
+		<h2 align="center">Health Search Application</h2>
+		<hr COLOR="grey">
+		<h2 align="center">
+
+		<div class="container" style="max-width:400px">
+			<form method="post" class="form-signin">{% csrf_token %}
+				<h2 class="form-signin-heading">Please Sign Up</h2>
+				<input type="text" name="username" class="form-control" placeholder="username*" autofocus>
+				<input type="password" name="password" class="form-control" placeholder="Password*">
+				<input type="email" name="email" class="form-control" placeholder="email*">
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+			</form>
+			<p>{{error}}</p>
+		</div> <!-- /container sign  -->
+
+		<div class="back" align="center">
+			<a href="/searchapp/login" target="_parent"><button type="button" class="btn btn-default">GO BACK</button></a>
+		</div>
+	</body>
+
+</html>
