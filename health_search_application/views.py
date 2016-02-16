@@ -2,19 +2,19 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("Index page.")
+    return render(request, 'health_search_application/index.html')
 	
 def signup(request):
-    return HttpResponse("Signup page.")
+    return render(request, 'health_search_application/signup.html')
 
 def login(request):
-    return HttpResponse("Login page.")
+    return render(request, 'health_search_application/login.html')
 	
 def logout(request):
-    return HttpResponse("Logout page.")
+    return render(request, 'health_search_application/logout.html')
 
 def changepassword(request):
-    return HttpResponse("Change_password page.")
+    return render(request, 'health_search_application/changepassword.html')
 	
 def profile(request):
-    return HttpResponse("Profile page.")
+    return render(request, 'health_search_application/profile.html')
