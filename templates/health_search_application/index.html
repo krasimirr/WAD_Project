@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 
+{% load staticfiles %}
+
 <html lang="en">
 
 	<head>
@@ -7,7 +9,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="searchapp.css">
+		<link rel="stylesheet" href="{% static "css/searchapp.css" %}" /> <!-- CSS -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	</head>
@@ -17,6 +19,33 @@
 			<a href="/searchapp/logout" target="_parent"><button type="button" class="btn btn-default">Log out</button></a>
 			<a href="/searchapp/profile" target="_parent"><button type="button" class="btn btn-default">My profile</button></a>
 		</div>
+		<br>
+		<br>
+		<div class="container" style="max-width:250px">
+			<form id="searchform" method="post" class="input-area" >{% csrf_token %}
+				<input type="text" name="search" class="input-box" size="80" placeholder="Type symptoms" autofocus>
+				<button class="submit" type="submit" >SEARCH</button>
+			</form>
+			<p>{{error}}</p>
+			<p id="success"></p>
+		</div> <!-- /container -->
+		<hr id="line">
+
+		<script>
+			$(document).ready(function () {
+			$('#searchform').on('submit', function(e) {
+				e.preventDefault();
+				$.ajax({
+					type: 'POST', // form submit method get/post
+					data: $('#searchform').serialize(),			
+					success: function (response) {
+						$('#success').html("Loading.");
+					}
+				});
+			});
+			});
+		</script>	
+
 	</body>
 	
 </html>

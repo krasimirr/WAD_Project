@@ -94,37 +94,37 @@ def checku(username):
     return True
 
 def login(request):
-	if request.user.username and request.user.profile.is_app_user:
-		return HttpResponseRedirect(reverse('index'))
-	context = {'error':''}
+    if request.user.username and request.user.profile.is_app_user:
+        return HttpResponseRedirect(reverse('index'))
+    context = {'error':''}
 
-	if request.method == 'POST':
-		username = request.POST.get('username','') #return '' if no username
-		password = request.POST.get('password','')
+    if request.method == 'POST':
+        username = request.POST.get('username','') #return '' if no username
+        password = request.POST.get('password','')
 
-		user = auth.authenticate(username=username,password=password)
+	user = auth.authenticate(username=username,password=password)
 
-		if user is not None:
-			auth.login(request,user)
-			cu = request.user.profile
-			cu.is_app_user = True
-			cu.last_accessed = utcnow()
-			cu.save()
-			return HttpResponseRedirect(reverse('index'))
-		else:
-			context['error'] = 'Wrong username and/or password. Try again.'
-			return render(request,'health_search_application/login.html',context)
+	if user is not None:
+	    auth.login(request,user)
+	    cu = request.user.profile
+	    cu.is_app_user = True
+	    cu.last_accessed = utcnow()
+	    cu.save()
+	    return HttpResponseRedirect(reverse('index'))
+	else:
+	    context['error'] = 'Wrong username and/or password. Try again.'
+	    return render(request,'health_search_application/login.html',context)
 
 
-	context.update(csrf(request))
-	return render(request,'health_search_application/login.html',context)
+    context.update(csrf(request))
+    return render(request,'health_search_application/login.html',context)
 
 
 def logout(request):
-	cu = request.user.profile
-	cu.is_app_user = False
-	cu.save()
-	return render(request,'health_search_application/logout.html')
+    cu = request.user.profile
+    cu.is_app_user = False
+    cu.save()
+    return render(request,'health_search_application/logout.html')
 
 def changepassword(request):
     if request.user.username and request.user.profile.is_app_user:
