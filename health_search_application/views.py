@@ -15,6 +15,10 @@ from django.core.exceptions import ValidationError
 
 
 def index(request):
+    if request.method == 'POST':
+        context = {'error':''}
+        context['error'] = 'Wrong username and/or password. Try again.'
+	return render(request,'health_search_application/index.html',context)
     if request.user.username and request.user.profile.is_app_user:
 	return render(request, 'health_search_application/index.html')
     else:
@@ -25,7 +29,7 @@ def profile(request):
 
 def signup(request):
     global users
-    context = {'error':''}
+    context = {}
     users = str(User.objects.all()).split(" ")
     if request.method == 'POST':
         username = request.POST.get('username','')
@@ -33,35 +37,17 @@ def signup(request):
         lname = request.POST.get('lastname','')
         password = request.POST.get('password','')
         email = request.POST.get('email','')
-        if username!="" and password!="" and email!="" and checku(username) and validateEmail(email) and len(username)<=10 and 6<=len(password)<=14:
+        if username!="" and password!="" and email!="" and checku(username) and len(username)<=10 and 6<=len(password)<=14:
             user = User.objects.create_user(username,email,password)
             user = auth.authenticate(username=username,password=password)
             user.first_name=fname
             user.last_name=lname
             user.save()
-        if email!="" and validateEmail(email)==False:
-            context['error']="Please, use a valid email."
-            return render(request,'health_search_application/signup.html',context)
+        #if email!="" and validateEmail(email)==False:
+            #context['error']="Please, use a valid email."
+            #return render(request,'health_search_application/signup.html',context)
         if username!="" and checku(username)==False:
-            context['error']="Please, pick another username."
-            return render(request,'health_search_application/signup.html',context)
-        if username=="" or password=="" or email=="":
-            context['error']="Please, fill in all the details."
-            return render(request,'health_search_application/signup.html',context)
-        if username!="" and password!="" and email!="" and len(username)>10 and 6<=len(password)<=14:
-            context['error']="The username should be no more than 10 characters."
-            return render(request,'health_search_application/signup.html',context)
-        if username!="" and password!="" and email!="" and len(password)>14 and len(username)<=10:
-            context['error']="The password should be between 6 and 10 characters."
-            return render(request,'health_search_application/signup.html',context)
-        if username!="" and password!="" and email!="" and len(password)<6 and len(username)<=10:
-            context['error']="The password should be between 6 and 10 characters."
-            return render(request,'health_search_application/signup.html',context)
-        if username!="" and password!="" and email!="" and len(password)<6 and len(username)>10:
-            context['error']="The password should be between 6 and 10 characters and the username should be no more than 10 characters."
-            return render(request,'health_search_application/signup.html',context)
-        if username!="" and password!="" and email!="" and len(password)>14 and len(username)>10:
-            context['error']="The password should be between 6 and 10 characters and the username should be no more than 10 characters."
+            context['user_error']="Please, pick another username."
             return render(request,'health_search_application/signup.html',context)
         if user is not None:
             auth.login(request,user)
@@ -72,19 +58,19 @@ def signup(request):
 
             return HttpResponseRedirect(reverse('index'))
         else:
-            context['error']="Please, fill all the details."
+            context['error']="Please, fill in all the details."
             return render(request,'health_search_application/signup.html',context)
 
     context.update(csrf(request))
     return render(request,'health_search_application/signup.html',context)
 
 
-def validateEmail( email ):
-    try:
-        validate_email( email )
-        return True
-    except ValidationError:
-        return False
+#def validateEmail( email ):
+#    try:
+#        validate_email( email )
+#        return True
+#    except ValidationError:
+#        return False
 
 def checku(username):
     global users

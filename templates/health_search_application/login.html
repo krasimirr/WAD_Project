@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 
+{% load staticfiles %}
+
 <html lang="en">
 
 	<head>
@@ -10,6 +12,7 @@
 		<link rel="stylesheet" type="text/css" href="searchapp.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script src="{% static 'js/script.js' %}"></script>
 	</head>
 	
 	<body>
@@ -18,10 +21,10 @@
 		<hr COLOR="grey">
 		<h2 align="center">
 		<div class="container" style="max-width:400px">
-			<form method="post" class="form-signin">{% csrf_token %}
+			<form method="post" class="form-signin" onsubmit="return ValidLogForm(this);">{% csrf_token %}
 				<h2 class="form-signin-heading">Please Log in</h2>
-				<input type="text" name="username" class="form-control" placeholder="Username*" autofocus>
-				<input type="password" name="password" class="form-control" placeholder="Password*">
+				<input type="text" name="username" class="form-control" placeholder="Username*" autofocus> <font size="2" id="user_error"></font>
+				<input type="password" name="password" class="form-control" placeholder="Password*"> <font size="2" id="password_error"></font>
 				<button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
 			</form>
 			<p>{{error}}</p>

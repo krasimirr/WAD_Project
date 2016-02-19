@@ -9,9 +9,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{% static "css/searchapp.css" %}" /> <!-- CSS -->
+		<link rel="stylesheet" href="{% static 'css/searchapp.css' %}" /> <!-- CSS -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		<script src="{% static 'js/script.js' %}"></script>
 	</head>
 
 	<body>
@@ -24,28 +25,12 @@
 		<div class="container" style="max-width:250px">
 			<form id="searchform" method="post" class="input-area" >{% csrf_token %}
 				<input type="text" name="search" class="input-box" size="80" placeholder="Type symptoms" autofocus>
-				<button class="submit" type="submit" >SEARCH</button>
+				<button class="submit" type="submit" onclick="reload()" >SEARCH</button>
 			</form>
-			<p>{{error}}</p>
 			<p id="success"></p>
 		</div> <!-- /container -->
 		<hr id="line">
-
-		<script>
-			$(document).ready(function () {
-			$('#searchform').on('submit', function(e) {
-				e.preventDefault();
-				$.ajax({
-					type: 'POST', // form submit method get/post
-					data: $('#searchform').serialize(),			
-					success: function (response) {
-						$('#success').html("Loading.");
-					}
-				});
-			});
-			});
-		</script>	
-
+		<p id="error">{{error}}</p>
 	</body>
 	
 </html>
