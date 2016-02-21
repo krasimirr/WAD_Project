@@ -56,3 +56,7 @@ function activate(x) {
 //	vph = $(window).height();
 //	$('').css({'max-height': vph/3});
 //}
+
+//function unhide () {
+//	document.getElementById("results_hidden").className = "unhidden";
+//}

@@ -16,25 +16,27 @@
 	</head>
 
 	<body>
-		<ul>
+		
+		<ul class="ul_top">
 			<li><a href="#about">About</a></li>
 			<li><a href="#contact">Contact</a></li>
 			<li><a href="/searchapp/profile">Profile</a></li>	
 		</ul>
 	
 		<div class="container" style="max-width:1050px">
+		<img src="/static/logo.png" alt="GUES" height="10%" width="100%">
 		
 			<div>
 				<form id="searchform" method="post" class="input-area" >{% csrf_token %}
-					<input type="text" name="search" class="input-box" size="80" placeholder="Type symptoms" autofocus>
+					<input type="text" name="search" class="input-box" size="80" placeholder="	Type symptoms" autofocus>
 					<button class="submit" type="submit">SEARCH</button>
 				</form>
 				<p id="success"></p>
 			</div> 
 		
 
-			<div id="resulid" class="unhidden" style="max-width:335px" >
-				<ul id="reul">
+			<div id="resulid" style="max-width:331px" >
+				<ul class="ul_search">
 					<li><a id="4" onclick="activate('4')">Bing</a></li>
 					<li><a id="3" onclick="activate('3')">MedlinePlus</a></li>
 					<li><a id="2" onclick="activate('2')">HealthFinder</a></li>
@@ -43,17 +45,37 @@
 			</div>
 		
 			<hr id="line">
+			
+			<div id="line">
+					
+				{% if data %}
+					<p align="center"> There are {{data|length}} results. </p>
+				{% elif data|length = 0 %}
+					<p align="center"> No results found. </p>
+				{% else %}
+					<p align="center"> </p>
+				{% endif %}
+				
+			</div>
+
+			<div class="dict_results" >
+				{% for key, value in data %}
+					<div class="result_box" "max-width:580px">
+						<a href={{ value }}> {{ value }}</a> <br>
+					</div>
+					<p class="clear-both"></p>
+				{% endfor %}
+			</div>
 		
 		</div> <!-- /container -->
 		
 		<p id="error">{{error}}</p>
 		<p id="error">{{result}}</p>
 		
-		<div id="dict_results">
-			{% for key, value in data %}
-				<a href={{ value }}> {{ value }}</a> <br>
-			{% endfor %}
-		</div>
+
+		
+
+		
 
 <!--	<script>
 		vph = $(window).height();

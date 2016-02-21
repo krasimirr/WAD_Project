@@ -17,7 +17,7 @@ import json
 import xml.etree.ElementTree as ET
 
 def index(request):
-    context = {'url' : []}
+    context={}
     if request.method == 'POST':
         search = request.POST.get('search','').split(" ")
         req_api="http://healthfinder.gov/developer/Search.xml?api_key=gnviveyezcuamzei&keyword="

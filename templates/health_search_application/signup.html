@@ -17,12 +17,23 @@
 	</head>
 		
 	<body>
-		<h1 align="center">WELCOME TO</h1>
-		<h2 align="center">Health Search Application</h2>
-		<hr COLOR="grey">
+	
+		<style>
+			body{
+				background-image: url("http://img3.goodfon.su/original/2880x1800/e/3e/pose-body-brain-human.jpg");
+				background-repeat:no-repeat;
+				background-size:cover;
+			}
+			div {
+				background-color: #FFFFFF;
+				border-radius: 25px;
+			}
+		</style>
+
 		<h2 align="center">
 
 		<div class="container" style="max-width:400px">
+			<img src="/static/logo.png" alt="HealthMate" height="30%" width="100%">
 			<form method="post" class="form-signin" onsubmit="return ValidSignForm(this);">{% csrf_token %}
 				<h2 class="form-signin-heading">Please Sign Up</h2>
 				<input type="text" name="username" class="form-control" placeholder="Username*" autofocus> <font size="2" id="user_error">{{user_error}}</font>
@@ -35,9 +46,8 @@
 			<p>{{error}}</p>
 		</div> <!-- /container sign  -->
 
-		<div class="back" align="center">
-			<a href="/searchapp/login" target="_parent"><button type="button" class="btn btn-default">GO BACK</button></a>
-		</div>
+		<a href="/searchapp/login" target="_parent"><button type="button" class="btn btn-default">GO BACK</button></a>
+
 	</body>
 
 </html>
