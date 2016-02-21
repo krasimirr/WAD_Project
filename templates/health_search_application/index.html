@@ -16,21 +16,57 @@
 	</head>
 
 	<body>
-		<div class="back" align="center">
-			<a href="/searchapp/logout" target="_parent"><button type="button" class="btn btn-default">Log out</button></a>
-			<a href="/searchapp/profile" target="_parent"><button type="button" class="btn btn-default">My profile</button></a>
-		</div>
-		<br>
-		<br>
-		<div class="container" style="max-width:250px">
-			<form id="searchform" method="post" class="input-area" >{% csrf_token %}
-				<input type="text" name="search" class="input-box" size="80" placeholder="Type symptoms" autofocus>
-				<button class="submit" type="submit" onclick="reload()" >SEARCH</button>
-			</form>
-			<p id="success"></p>
+		<ul>
+			<li><a href="#about">About</a></li>
+			<li><a href="#contact">Contact</a></li>
+			<li><a href="/searchapp/profile">Profile</a></li>	
+		</ul>
+	
+		<div class="container" style="max-width:1050px">
+		
+			<div>
+				<form id="searchform" method="post" class="input-area" >{% csrf_token %}
+					<input type="text" name="search" class="input-box" size="80" placeholder="Type symptoms" autofocus>
+					<button class="submit" type="submit">SEARCH</button>
+				</form>
+				<p id="success"></p>
+			</div> 
+		
+
+			<div id="resulid" class="unhidden" style="max-width:335px" >
+				<ul id="reul">
+					<li><a id="4" onclick="activate('4')">Bing</a></li>
+					<li><a id="3" onclick="activate('3')">MedlinePlus</a></li>
+					<li><a id="2" onclick="activate('2')">HealthFinder</a></li>
+					<li><a id="1" class="active" onclick="activate('1')">All</a></li>
+				</ul>
+			</div>
+		
+			<hr id="line">
+		
 		</div> <!-- /container -->
-		<hr id="line">
+		
 		<p id="error">{{error}}</p>
+		<p id="error">{{result}}</p>
+		
+		<div id="dict_results">
+			{% for key, value in data %}
+				<a href={{ value }}> {{ value }}</a> <br>
+			{% endfor %}
+		</div>
+
+<!--	<script>
+		vph = $(window).height();
+		$('').css({'max-height': vph/3})
+		$(document).ready(function(){
+		resizeDiv();
+		});
+
+		window.onresize = function(event) {
+		resizeDiv();
+		}
+	</script>-->
+
 	</body>
 	
 </html>

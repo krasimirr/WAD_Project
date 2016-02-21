@@ -30,15 +30,29 @@ function reload(){
 	}
 
 	$(document).ready(function () {
-	$('#searchform').on('submit', function(e) {
+	$('#searchformm').on('submit', function(e) {
 		e.preventDefault();
 		$.ajax({
 			type: 'POST', // form submit method get/post
 			data: $('#searchform').serialize(),			
 			success: function (response) {
-				$('#success').html("Loading.");
-				$('#error').load();
+				document.getElementById("resulid").className = "unhidden";
+				//$('#success').html("");
+
 			}
 		});
 	});
 });
+
+function activate(x) {
+	document.getElementById("1").className = "1";
+	document.getElementById("2").className = "2";
+	document.getElementById("3").className = "3";
+	document.getElementById("4").className = "4";
+	document.getElementById(x).className = "active";
+}	
+
+//function resizeDiv() {
+//	vph = $(window).height();
+//	$('').css({'max-height': vph/3});
+//}
