@@ -28,8 +28,8 @@
 		
 			<div>
 				<form id="searchform" method="post" class="input-area" >{% csrf_token %}
-					<input type="text" name="search" class="input-box" size="80" placeholder="	Type symptoms" autofocus>
-					<button class="submit" type="submit">SEARCH</button>
+					<input type="text" name="search" class="input-box" size="80" placeholder="	Type symptoms" maxlength="210" autofocus>
+					<button class="submit" type="submit" onclick="load()">SEARCH</button>
 				</form>
 				<p id="success"></p>
 			</div> 
@@ -43,15 +43,17 @@
 					<li><a id="1" class="active" onclick="activate('1')">All</a></li>
 				</ul>
 			</div>
-		
+
+			<p id="loading"> </p>
+			
 			<hr id="line">
 			
-			<div id="line">
+			<div id="line" style="max-width:800px">
 					
 				{% if data %}
-					<p align="center"> There are {{data|length}} results. </p>
+					<p align="center"> There are {{data|length}} results for: {{search}} </p>
 				{% elif data|length = 0 %}
-					<p align="center"> No results found. </p>
+					<p align="center"> No results found.</p>
 				{% else %}
 					<p align="center"> </p>
 				{% endif %}

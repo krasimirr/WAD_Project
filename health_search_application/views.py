@@ -18,11 +18,14 @@ import xml.etree.ElementTree as ET
 
 def index(request):
     context={}
+    searchstr=""
     if request.method == 'POST':
         search = request.POST.get('search','').split(" ")
         req_api="http://healthfinder.gov/developer/Search.xml?api_key=gnviveyezcuamzei&keyword="
         for word in search:
             req_api+=word+"%20"
+        for i in range(len(search)):
+            searchstr=searchstr+" "+str(search[i])
         req_api=req_api[:-3]
         j=requests.get(req_api).content
 
@@ -35,12 +38,12 @@ def index(request):
             #context['url'] = context['url'] + ["<a href="+str(i.text)+">"+str(i.text)+"</a>"]
             context[i] = i.text
 
-	return render(request,'health_search_application/index.html',{'data': sorted(context.iteritems())})
+	return render(request,'health_search_application/index.html',{'data': sorted(context.iteritems()), 'search': searchstr})
     if request.user.username and request.user.profile.is_app_user:
 	return render(request, 'health_search_application/index.html')
     else:
 	return HttpResponseRedirect(reverse('login'))
-	
+
 def profile(request):
     return render(request, 'health_search_application/profile.html')
 
