@@ -1,3 +1,132 @@
+function avatar(email) {
+    alert("-make a registration in Gravatar to upload your avatar\n-use the email you provided to us: "+email);
+}
+
+function createCategory() {
+	var name=document.getElementById("newcategoryid").value;
+	$.ajax({
+		type: "POST",
+        url: "/searchapp/profile",
+        data: {
+			csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+			newCategory: name,
+			nameCategory: '',
+			urlPage: '',
+		},
+        success: function(){
+			$("#profile_categories").load(location.href+" #profile_categories>*","");
+		},
+		error: function(){
+			alert("Could not create it.");
+		}
+		
+    });
+}
+
+function deleteCategory(name) {
+	if (!confirm("Are you sure you want to delete this category?") == true) return false;
+	$.ajax({
+		type: "POST",
+        url: "/searchapp/profile",
+        data: {
+			csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+			nameCategory: name,
+			urlPage: '',
+		},
+        success: function(){
+			$("#profile_categories").load(location.href+" #profile_categories>*","");
+		},
+		error: function(){
+			alert("Could not delete it.");
+		}
+		
+    });
+}
+
+function deletePage(name) {
+	if (!confirm("Are you sure you want to delete this page?") == true) return false;
+	$.ajax({
+		type: "POST",
+        url: "/searchapp/profile",
+        data: {
+			csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+			urlPage: name,
+			nameCategory: '',
+		},
+        success: function(){
+			$(".unhidden").load(location.href+" .unhidden>*","");
+		},
+		error: function(){
+			alert("Could not delete it.");
+		}
+		
+    });
+}
+
+function show(cat_id, keys) {
+	if (document.getElementById(cat_id).className=="unhidden") {
+		document.getElementById(cat_id).className="hidden";
+		document.getElementById(cat_id+"h1").innerHTML="+ "+cat_id;
+	}
+	else {
+		document.getElementById(cat_id).className="unhidden";
+		document.getElementById(cat_id+"h1").innerHTML="- "+cat_id;
+	}
+}
+
+function addCategory(title, url, readingRating, sentimentRating) {
+	document.getElementById("resultTitle").innerHTML="&nbsp &nbsp Title: "+title;
+	document.getElementById("resultUrl").innerHTML="&nbsp &nbsp Url: <a href="+url+" target='_blank'>"+url+"</a>";
+	document.getElementById("resultRscore").innerHTML="&nbsp &nbsp Reading ease score: "+readingRating;
+	document.getElementById("resultSscore").innerHTML="&nbsp &nbsp Sentiment: "+sentimentRating;
+}
+
+function sendResults(){
+	var titleDiv=document.getElementById("resultTitle").innerHTML;
+	var title=titleDiv.substring(21);
+	
+	var urlDiv=document.getElementById("resultUrl").innerHTML;
+	var urlFetch=urlDiv.match('href="(.*)" target');
+	var url=urlFetch[1];
+	
+	
+	var readingRatingDiv=document.getElementById("resultRscore").innerHTML;
+	var readingRating=readingRatingDiv.substring(34);
+	
+	var sentimentRatingDiv=document.getElementById("resultSscore").innerHTML;
+	var sentimentRating=sentimentRatingDiv.substring(25);
+	
+	var selected=document.getElementById("selectCategory");
+	var selectedCategory = selected.options[selected.selectedIndex].value;
+	
+	if (selectedCategory=="specify") {
+		var selectedCategory=document.getElementById("newcategoryid").value;
+	}
+
+	if (selectedCategory=='') { alert("Please specify a category name."); return false; }
+
+	$.ajax({
+		type: "POST",
+        url: "/searchapp/",
+        data: {
+			csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+			title: title,
+			url: url,
+			readingRating: readingRating,
+			sentimentRating: sentimentRating,
+			category: selectedCategory,
+		},
+        success: function(){
+			document.getElementById(url).src="/static/images/tick.png"
+			document.getElementById(url).onclick=function() { alert("This result has already been reviewed.") }
+		},
+		error: function(){
+			alert("Could not save it.");
+		}
+		
+    });
+}
+
 function ValidLogForm(f) {
 	if (f.username.value == "") {document.getElementById("user_error").innerHTML = "Please fill in your username."; return false;}
 	if (f.password.value == "") {document.getElementById("password_error").innerHTML = "Please fill in your password."; return false;}
@@ -22,51 +151,14 @@ function ValidEmail(email) {
 	return re.test(email);
 	}
 
-
-function reload(){
-	var container = document.getElementById("error");
-	var content = container.innerHTML;
-	container.innerHTML= content;
-	}
-
-	$(document).ready(function () {
-	$('#searchformm').on('submit', function(e) {
-		e.preventDefault();
-		$.ajax({
-			type: 'POST', // form submit method get/post
-			data: $('#searchform').serialize(),			
-			success: function (response) {
-				document.getElementById("resulid").className = "unhidden";
-				//$('#success').html("");
-
-			}
-		});
-	});
-});
-
-function post(path, params, method) {
-    method = method || "post"; // Set method to post by default if not specified.
-
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
-
-    for(var key in params) {
-        if(params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
-
-            form.appendChild(hiddenField);
-         }
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-}
+function ValidContactForm(f) {
+	if (f.name.value == "") {document.getElementById("name_error").innerHTML = "Please fill in your name."; return false;}
+	if (f.email.value == "") {document.getElementById("email_error").innerHTML = "Please fill in your email."; return false;}
+	if (f.message.value == "") {document.getElementById("message_error").innerHTML = "Please fill in your message."; return false;}
+	if (!ValidEmail(f.email.value)) {document.getElementById("email_error").innerHTML = "The given email is not valid."; return false;}
+	if (f.name.value.length > 16) {document.getElementById("name_error").innerHTML = "Please use a name that is less than 17 characters."; return false;}
+	if (f.message.value.length > 4000) {document.getElementById("message_error").innerHTML = "The message should not be more than 4000 characters."; return false;}
+	return true; }
 
 function activate(x) {
 	document.getElementById("1").className = "1";
@@ -74,20 +166,42 @@ function activate(x) {
 	document.getElementById("3").className = "3";
 	document.getElementById("4").className = "4";
 	document.getElementById(x).className = "active";
-	//post('/searchapp/',{name: 'Johnny Bravo'});
+	
+	document.getElementById("1api").className = "hidden";
+	document.getElementById("2api").className = "hidden";
+	document.getElementById("3api").className = "hidden";
+	document.getElementById("4api").className = "hidden";
+	
+	document.getElementById(x.concat("api")).className = "dict_results";
 }	
 
 function load() {
-	document.getElementById('loading').innerHTML = '<img src="/static/loading.gif" alt="Loading" height="20%" width="20%">';
+	document.getElementById('loading').innerHTML = '<img src="/static/images/loading.gif" alt="Loading" height="20%" width="20%">';
 }
 
+function unhide () {
+	document.getElementById("results_hidden").className = "unhidden";
+}
 
-//function resizeDiv() {
-//	vph = $(window).height();
-//	$('').css({'max-height': vph/3});
-//}
+function contactus(){
+	var left = (screen.width/2)-(400/2);
+	var top = (screen.height/2)-(350/2);
+    popupWindow = window.open(
+	'/searchapp/contact/', 'Contact us', 'height=350,width=450, resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes, top='+top+', left='+left)
+}
+		
+$(document).ready(function(){
+    $('[data-toggle="aboutpopoverup"]').popover({
+		placement: 'top',
+        title: '<p> Federated Health Search Application:',
+        content: '<p>The purpose of this application is to help people find out about particular conditions and to save the information that they find into different folders. The application lets people search across two different medical sites (medline and healthfinder) and the general web (bing). People using the application would like to self diagnose, i.e. given some symptoms find out what are the likely conditions. They would also like to find out information about particular conditions, treatments and medicines. The application should help the users understand if the information is easy to read, is loaded with senitment and subjectivity.</p>',
+		html:true });
+});
 
-
-//function unhide () {
-//	document.getElementById("results_hidden").className = "unhidden";
-//}
+$(document).ready(function(){
+    $('[data-toggle="aboutpopoverdown"]').popover({
+		placement: 'left',
+        title: '<p> Federated Health Search Application:',
+        content: '<p>The purpose of this application is to help people find out about particular conditions and to save the information that they find into different folders. The application lets people search across two different medical sites (medline and healthfinder) and the general web (bing). People using the application would like to self diagnose, i.e. given some symptoms find out what are the likely conditions. They would also like to find out information about particular conditions, treatments and medicines. The application should help the users understand if the information is easy to read, is loaded with senitment and subjectivity.</p>',
+		html:true });
+});

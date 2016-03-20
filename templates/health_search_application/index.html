@@ -18,24 +18,24 @@
 	<body>
 		
 		<ul class="ul_top">
-			<li><a href="#about">About</a></li>
-			<li><a href="#contact">Contact</a></li>
+			<li><a data-toggle="aboutpopoverdown">About</a></li>
+			<li><a onclick="contactus()">Contact</a></li>
 			<li><a href="/searchapp/profile">Profile</a></li>	
 		</ul>
 	
-		<div class="container" style="max-width:1050px">
-		<img src="/static/logo.png" alt="GUES" height="10%" width="100%">
+		<div id="logo_search_result">
+		<img src="{% static 'images/logo.png' %}" alt="HealthM8" height="10%" width="100%">
 		
 			<div>
 				<form id="searchform" method="post" class="input-area" >{% csrf_token %}
 					<input type="text" name="search" class="input-box" size="80" placeholder="	Type symptoms" maxlength="210" autofocus>
-					<button class="submit" type="submit" onclick="load()">SEARCH</button>
+					<button class="submit" type="submit" onclick="load()"><h6 id="search_text">SEARCH</h6></button>
 				</form>
 				<p id="success"></p>
 			</div> 
 		
 
-			<div id="resulid" style="max-width:331px" >
+			<div id="resulid">
 				<ul class="ul_search">
 					<li><a id="4" onclick="activate('4')">Bing</a></li>
 					<li><a id="3" onclick="activate('3')">MedlinePlus</a></li>
@@ -46,24 +46,75 @@
 
 			<p id="loading"> </p>
 			
-			<hr id="line">
+			<hr class="line">
 			
-			<div id="line" style="max-width:800px">
+			<div class="line">
 					
-				{% if data %}
-					<p align="center"> There are {{data|length}} results for: {{search}} </p>
-				{% elif data|length = 0 %}
+				{% if alllength > 0 %}
+					<p align="center"> There are {{alllength}} results for: {{search}} </p>
+				{% elif alllength = 0 %}
 					<p align="center"> No results found.</p>
 				{% else %}
 					<p align="center"> </p>
 				{% endif %}
 				
 			</div>
-
-			<div class="dict_results" >
-				{% for key, value in data %}
-					<div class="result_box" "max-width:580px">
-						<a href={{ value }}> {{ value }}</a> <br>
+			
+			
+			<!-- ALL RESULTS -->
+			<div id="1api" class="dict_results" >
+				{% for key, value in allapis %}
+					<div id="result_box">
+						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
+						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
+						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
+						<span> &nbsp &nbsp Sentiment: {{ value.2 }} </span> <br>
+						&nbsp &nbsp  <img id={{ key }} onclick="addCategory('{{ value.0 }}', '{{ key }}', '{{ value.1 }}', '{{ value.2 }}')" data-toggle="modal" data-target="#myModal"  src="{% static 'images/add.png' %}" alt="red plus" height="2%" width="2%" title="Add to category."></img> <br>
+					</div>
+					<p class="clear-both"></p>
+				{% endfor %}
+			</div>
+			
+			
+			<!-- HEALTH RESULTS -->
+			<div id="2api" class="hidden" >
+				{% for key, value in healthapi %}
+					<div id="result_box">
+						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
+						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
+						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
+						<span> &nbsp &nbsp Sentiment: {{ value.2 }} </span> <br>
+						&nbsp &nbsp  <img id={{ key }} onclick="addCategory('{{ value.0 }}', '{{ key }}', '{{ value.1 }}', '{{ value.2 }}')" data-toggle="modal" data-target="#myModal"  src="{% static 'images/add.png' %}" alt="red plus" height="2%" width="2%" title="Add to category."></img> <br>
+					</div>
+					<p class="clear-both"></p>
+				{% endfor %}
+			</div>
+			
+			
+			<!-- MEDLINE RESULTS -->
+			<div id="3api" class="hidden" >
+				{% for key, value in medlineapi %}
+					<div id="result_box">
+						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
+						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
+						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
+						<span> &nbsp &nbsp Sentiment: {{ value.2 }} </span> <br>
+						&nbsp &nbsp  <img id={{ key }} onclick="addCategory('{{ value.0 }}', '{{ key }}', '{{ value.1 }}', '{{ value.2 }}')" data-toggle="modal" data-target="#myModal"  src="{% static 'images/add.png' %}" alt="red plus" height="2%" width="2%" title="Add to category."></img> <br>
+					</div>
+					<p class="clear-both"></p>
+				{% endfor %}
+			</div>
+		
+		
+			<!-- BING RESULTS -->
+			<div id="4api" class="hidden" >
+				{% for key, value in bingapi %}
+					<div id="result_box">
+						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
+						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
+						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
+						<span> &nbsp &nbsp Sentiment: {{ value.2 }} </span> <br>
+						&nbsp &nbsp  <img id={{ key }} onclick="addCategory('{{ value.0 }}', '{{ key }}', '{{ value.1 }}', '{{ value.2 }}')" data-toggle="modal" data-target="#myModal"  src="{% static 'images/add.png' %}" alt="red plus" height="2%" width="2%" title="Add to category."></img> <br>
 					</div>
 					<p class="clear-both"></p>
 				{% endfor %}
@@ -71,25 +122,59 @@
 		
 		</div> <!-- /container -->
 		
-		<p id="error">{{error}}</p>
-		<p id="error">{{result}}</p>
+		<!-- MODAL FOR ADDING CATEGORIES -->
 		
+		<div class="container">
+		  <!-- Modal -->
+		  <div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog">
+			
+			  <!-- Modal content-->
+			  <div class="modal-content">
 
-		
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title">Add to a category.</h4>
+				</div>
 
-		
+				<div class="modal-body">
+					Please select a category:
+					<select id="selectCategory">
+						<option value="specify">--specify a new category--</option>
+						{% if allCategories %}
+							{% for key, value in allCategories %}
+								{% for category in value %}
+								  <option value="{{ category }}">{{ category }}</option>
+								{% endfor %}
+							{% endfor %}
+						{% endif %}
+					</select> <br>
+					or <br>
+					Specify a new category:  <input id="newcategoryid" type="text" name="newcategory">
 
-<!--	<script>
-		vph = $(window).height();
-		$('').css({'max-height': vph/3})
-		$(document).ready(function(){
-		resizeDiv();
-		});
+					
+					<hr>
+					
+					<div id="result_box">
+						<span id="resultTitle"> &nbsp &nbsp Title: {{ value.0 }} </span><br>
+						<span id="resultUrl"> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
+						<span id="resultRscore"> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
+						<span id="resultSscore"> &nbsp &nbsp Sentiment: {{ value.2 }} </span> <br>
+					</div>
+					<p class="clear-both"></p>
+					
+				</div>
 
-		window.onresize = function(event) {
-		resizeDiv();
-		}
-	</script>-->
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="sendResults()">Add</button>
+				</div>
+
+			  </div>
+			</div>
+		  </div>
+		  
+		</div>
+
 
 	</body>
 	
