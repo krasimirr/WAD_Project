@@ -29,6 +29,101 @@ from django.contrib.auth.decorators import user_passes_test
 BING_API_KEY = 'FitjpCKCS8W+p6jB14n660G3bGC9QTOrcIiPXRb4LwM'
 
 
+
+
+# ===================================================================== LOGIN =====================================================================
+def login(request):
+    if request.user.username and request.user.profile.is_app_user:
+        return HttpResponseRedirect(reverse('index'))
+    context = {'error':''}
+
+    # get the fields
+    if request.method == 'POST':
+        username = request.POST.get('username','') #return '' if no username
+        password = request.POST.get('pass','')
+
+        # authenticate the user
+	user = auth.authenticate(username=username,password=password)
+
+	if user is not None:
+	    auth.login(request,user)
+	    cu = request.user.profile
+	    cu.is_app_user = True
+	    cu.last_accessed = utcnow()
+	    cu.save()
+	    return HttpResponseRedirect(reverse('index'))
+	else:
+	    context['error'] = 'Wrong username and/or password. Try again.'
+	    return render(request,'health_search_application/login.html',context)
+
+    context.update(csrf(request))
+    return render(request,'health_search_application/login.html',context)
+
+
+
+
+# ===================================================================== SIGNUP ====================================================================
+def signup(request):
+    context = {}
+    if request.method == 'POST':
+
+        # get all the fields
+        username = request.POST.get('username','')
+        fname = request.POST.get('firstname','')
+        lname = request.POST.get('lastname','')
+        password = request.POST.get('pass','')
+        email = request.POST.get('email','')
+
+        # if the user exists, pick another username
+        if username!="" and User.objects.filter(username=username).exists():
+            context['user_error']="Please, pick another username."
+            return render(request,'health_search_application/signup.html',context)
+
+        # if there is a registered user with the same email, pick another email        
+        if username!="" and User.objects.filter(email=email).exists():
+            context['email_error']="Please, pick another email."
+            return render(request,'health_search_application/signup.html',context)
+            
+        if email!="" and validateEmail(email)==False:
+            context['email_error']="Please, use a valid email."
+            return render(request,'health_search_application/signup.html',context)
+
+        # if everything is filled and unique as well as valid, create the user
+        if username!="" and password!="" and email!="" and validateEmail(email) and len(username)<=10 and 3<=len(password)<=14 and \
+           not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists():
+            user = User.objects.create_user(username,email,password)
+            user = auth.authenticate(username=username,password=password)
+            user.first_name=fname
+            user.last_name=lname
+            user.save()
+
+            if user is not None:
+                auth.login(request,user)
+                cu = request.user.profile
+                cu.is_app_user = True
+                cu.last_accessed = utcnow()
+                cu.save()
+                return HttpResponseRedirect(reverse('index'))
+        
+        else:
+            context['error']="Please, fill in all the details."
+            return render(request,'health_search_application/signup.html',context)
+
+    context.update(csrf(request))
+    return render(request,'health_search_application/signup.html',context)
+
+# check if email is valid (again)
+def validateEmail( email ):
+    try:
+        validate_email( email )
+        return True
+    except ValidationError:
+        return False
+
+
+
+
+# ===================================================================== INDEX =====================================================================
 # main
 def index(request):
     if request.method=='POST':
@@ -87,9 +182,13 @@ def index(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
+
+
+# ===================================================================== APIs =====================================================================
+
 # get the result from Health Api and return it as a dictionary
 def healthapif(search):
-    #healthDict
+    
     healthDict={}
     
     # initial health api form
@@ -271,6 +370,10 @@ def bingapif(search_terms):
     return bingDict
 
 
+
+
+# ===================================================================== EXTRACT CONTENT =====================================================================
+
 # find the content of a Health finder page (in order to do the scorings)
 def findContentHealth(url):
     soup = BeautifulSoup.BeautifulSoup(urllib2.urlopen(url).read(),"html.parser")
@@ -324,6 +427,9 @@ def readingEaseScore(score):
         return "-"
 
 
+
+
+# ===================================================================== PROFILE =====================================================================
 # User's profile, return a dictionary with user's data, categories and pages
 def profile(request):
     if request.user.username and request.user.profile.is_app_user:
@@ -342,6 +448,7 @@ def profile(request):
             nameCategory=request.POST.get('nameCategory','')
             urlPage=request.POST.get('urlPage','')
             newCategory=request.POST.get('newCategory','')
+            newPassword=request.POST.get('newPassword','')
             
             if nameCategory!='':
                 c=Category.objects.get(userName=request.user.username, name=nameCategory)
@@ -352,8 +459,19 @@ def profile(request):
                 p.delete()
 
             if newCategory!='':
-                c = Category(userName=request.user.username, name=newCategory)
-                c.save()
+                if not Category.objects.filter(userName=request.user.username, name=newCategory).exists():
+                    c = Category(userName=request.user.username, name=newCategory)
+                    c.save()
+
+            if newPassword!='':
+                u = User.objects.get(username=request.user.username)
+                u.set_password(newPassword)
+                u.save()
+                cu = request.user.profile
+                cu.is_app_user = False
+                cu.save()
+                return render(request,'health_search_application/login.html')
+                
             
         catPageDict={}
 
@@ -379,94 +497,9 @@ def profile(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
-# Sign up
-def signup(request):
-    context = {}
-    if request.method == 'POST':
-
-        # get all the fields
-        username = request.POST.get('username','')
-        fname = request.POST.get('firstname','')
-        lname = request.POST.get('lastname','')
-        password = request.POST.get('password','')
-        email = request.POST.get('email','')
-
-        # if the user exists, pick another username
-        if username!="" and User.objects.filter(username=username).exists():
-            context['user_error']="Please, pick another username."
-            return render(request,'health_search_application/signup.html',context)
-
-        # if there is a registered user with the same email, pick another email        
-        if username!="" and User.objects.filter(email=email).exists():
-            context['email_error']="Please, pick another email."
-            return render(request,'health_search_application/signup.html',context)
-
-        # if everything is filled and unique as well as valid, create the user
-        if username!="" and password!="" and email!="" and len(username)<=10 and 6<=len(password)<=14 and \
-           not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists():
-            user = User.objects.create_user(username,email,password)
-            user = auth.authenticate(username=username,password=password)
-            user.first_name=fname
-            user.last_name=lname
-            user.save()
-            
-        #if email!="" and validateEmail(email)==False:
-            #context['error']="Please, use a valid email."
-            #return render(request,'health_search_application/signup.html',context)
-        
-        if user is not None:
-            auth.login(request,user)
-            cu = request.user.profile
-            cu.is_app_user = True
-            cu.last_accessed = utcnow()
-            cu.save()
-
-            return HttpResponseRedirect(reverse('index'))
-        else:
-            context['error']="Please, fill in all the details."
-            return render(request,'health_search_application/signup.html',context)
-
-    context.update(csrf(request))
-    return render(request,'health_search_application/signup.html',context)
 
 
-#def validateEmail( email ):
-#    try:
-#        validate_email( email )
-#        return True
-#    except ValidationError:
-#        return False
-
-
-# Login
-def login(request):
-    if request.user.username and request.user.profile.is_app_user:
-        return HttpResponseRedirect(reverse('index'))
-    context = {'error':''}
-
-    # get the fields
-    if request.method == 'POST':
-        username = request.POST.get('username','') #return '' if no username
-        password = request.POST.get('password','')
-
-        # authenticate the user
-	user = auth.authenticate(username=username,password=password)
-
-	if user is not None:
-	    auth.login(request,user)
-	    cu = request.user.profile
-	    cu.is_app_user = True
-	    cu.last_accessed = utcnow()
-	    cu.save()
-	    return HttpResponseRedirect(reverse('index'))
-	else:
-	    context['error'] = 'Wrong username and/or password. Try again.'
-	    return render(request,'health_search_application/login.html',context)
-
-    context.update(csrf(request))
-    return render(request,'health_search_application/login.html',context)
-
-
+# ===================================================================== LOGOUT =====================================================================
 # Log out (change the user's field 'is_app_user' to prevent them to access the core pages of the web app
 # Holds for not registered users aswell
 def logout(request):
@@ -474,35 +507,6 @@ def logout(request):
     cu.is_app_user = False
     cu.save()
     return render(request,'health_search_application/logout.html')
-
-
-# Change password
-def changepassword(request):
-    if request.user.username and request.user.profile.is_app_user:
-        context = {'error':''}
-
-        # get the new password (twice) and update the user's password if the two fields match
-        if request.method=="POST":
-            passwordnew = request.POST.get('passwordnew','')
-            passwordneww = request.POST.get('passwordneww','')
-            if passwordnew==passwordneww and 6<=len(passwordnew)<=14 and 6<=len(passwordnew)<=14:
-                u = User.objects.get(username=request.user.username)
-                u.set_password(passwordnew)
-                u.save()
-                return HttpResponseRedirect(reverse('login'))
-            if passwordnew=="" or passwordnew=="":
-                context['error'] = 'Please enter new password.'
-                return render(request,'health_search_application/changepassword.html',context)
-            if (len(passwordnew)<6 or len(passwordnew)>14 or len(passwordneww)<6 or len(passwordneww)>14) and passwordnew!="" and passwordneww!="":
-                context['error'] = 'Password length must be no less than 6 chatacters and no more than 14.'
-                return render(request,'health_search_application/changepassword.html',context)
-            else:
-                context['error'] = 'Passwords do not match.'
-                return render(request,'health_search_application/changepassword.html',context)
-        context.update(csrf(request))
-        return render(request,'health_search_application/changepassword.html',context)
-    else:
-        return render(request,'health_search_application/changepassword.html')
 
 
 # Contact us (creates a model with info that is passed from a registered/not registered user
@@ -521,6 +525,9 @@ def contact(request):
         return render(request,'health_search_application/contact.html',{})
 
 
+
+
+# ===================================================================== REPLAY TO USER =====================================================================
 # can be seen from superusers only
 # contact back the user(s)
 # gmail account: healthmateteam@gmail.com
