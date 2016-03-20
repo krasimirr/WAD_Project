@@ -1,0 +1,6 @@
+/*!CK:852019537!*//*1458144869,*/
+
+if (self.CavalryLogger) { CavalryLogger.start_js(["A9k2q"]); }
+
+__d('StreamShareVideo',['cx','AsyncRequest','CSS','Event','ge'],function a(b,c,d,e,f,g,h){if(c.__markCompiled)c.__markCompiled();var i={_endpoints:[],_thumbs:[],registerThumb:function(j,k,l,m){i._endpoints[j+' '+l]=m;i._thumbs[j+' '+l]=k;},clickTitle:function(j,k,event){return this.expandInlineOrRedirect(j,k,event);},expandInlineOrRedirect:function(j,k,event){if(i._shouldFollowHref(event))return true;var l=i._thumbs[j+' '+k],m=c('ge')(l);if(m){c('CSS').addClass(m,"uiVideoThumbLoading");c('AsyncRequest').bootstrap(i._endpoints[j+' '+k],m.parentNode);return false;}return true;},clickTimeline:function(j,k,event){if(i._shouldFollowHref(event))return true;c('CSS').addClass(j,"_1xu");c('CSS').removeClass(j,"_1xv");c('AsyncRequest').bootstrap(k,j);return false;},_shouldFollowHref:function(event){event=c('Event').$E(event);if(!event)return false;if(event.getModifiers().any||event.isMiddleClick())return true;return false;}};f.exports=i;},null);
+__d('legacy:stream-share-video',['StreamShareVideo'],function a(b,c,d,e,f,g){if(c.__markCompiled)c.__markCompiled();b.StreamShareVideo=c('StreamShareVideo');},3);

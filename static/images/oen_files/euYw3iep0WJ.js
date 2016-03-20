@@ -1,0 +1,5 @@
+/*!CK:2984564198!*//*1458045588,*/
+
+if (self.CavalryLogger) { CavalryLogger.start_js(["7x1Bp"]); }
+
+__d('MessengerScrollableTypeaheadView.react',['MessengerScrollableArea.react','MessengerTypeaheadUtils','MessengerTypeaheadView.react','ReactComponentWithPureRenderMixin','React'],function a(b,c,d,e,f,g){'use strict';if(c.__markCompiled)c.__markCompiled();var h=c('React').createClass({displayName:'MessengerScrollableTypeaheadView',mixins:[c('ReactComponentWithPureRenderMixin')],render:function(){var i=this.props,j=i.className,k=i.width,l=babelHelpers.objectWithoutProperties(i,['className','width']);return (c('React').createElement(c('MessengerScrollableArea.react'),{className:j,ref:'scrollable',width:k},c('React').createElement(c('MessengerTypeaheadView.react'),babelHelpers['extends']({},l,{onScrollIntoView:this._handleScrollIntoView}))));},_handleScrollIntoView:function(i){c('MessengerTypeaheadUtils').scrollEntryIntoView(i,this.refs.scrollable);}});f.exports=h;},null);

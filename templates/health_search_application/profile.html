@@ -7,20 +7,114 @@
 	<head>
 		<title>Search app</title>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- The browser will (probably) render the width of the page at the width of its own screen -->
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> <!-- Bootstrap (CSS) -->
 		<link rel="stylesheet" href="{% static 'css/searchapp.css' %}" /> <!-- CSS -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<script src="{% static 'js/script.js' %}"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> <!-- JQuery -->
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> <!-- Bootstrap (JS) -->
+		<script src="{% static 'js/script.js' %}"></script> <!-- JS -->
 	</head>
 
-	<body>
+	<body>{% csrf_token %}
+	
 		<ul class="ul_top">
 		<li><a href="/searchapp/logout">Log out</a></li>
-			<li><a href="/searchapp/changepassword">Change password</a></li>
+			<li><a data-toggle="modal" data-target="#change_pass">Change password</a></li>
 			<li><a href="/searchapp">Search</a></li>
-		</ul>
+		</ul> <!-- Navigation bar -->
+		
+		<div class="gravatar_box">
+			<div id="gravatar">
+				<a href="http://www.gravatar.com" target="_blank">
+					<img id="u_avatar" class="glow" src="{{avatar}}" alt="avatar" title="Signup at gravatar.com with the email you gave us to change your avatar." onclick="avatar('{{ email }}')">
+				</a>
+			</div>
+		</div> <!-- Profile picture (gravatar) -->
+		
+		<div class="information_box">
+			<div id="user_data">
+				{% if userData %}
+					{% for value in userData %}
+						<br> <font id="uData"> {{ value.0 }} {{ value.1 }} </font> <br><br>
+					{% endfor %}
+				{% endif %}
+			</div>
+		</div> <!-- User's data -->
+		
+		<div class="profile_category_box">
+			<div id="profile_categories">
+			
+				<h1 align="center"> Categories <img src="{% static 'images/add.png' %}" data-toggle="modal" data-target="#Add_a_categ" alt="red plus" height="3%" width="3%" title="Add a new category."></img> </h1>
+				<hr id="category_line">
+				
+				<!-- Show the user's categories (and eventually pages if the user clicks on the category's name) -->
+				{% if user_categories %}
+					{% for key, value in user_categories %}
+						<h3 id="{{ key }}h1" class="profile_cat_name" title="Click to see the pages in this category." onclick="show('{{ key }}', {{ keys }})"> + {{ key }} </h3>
+						<a  class="same_line2" onclick="deleteCategory('{{ key }}')"> <font class="delete" title="Delete the category."> (delete) </font> </a><br>
+						
+						<div id="{{ key }}" class="hidden">
+							{% for v in value %}
+								<div class="category_show">
+									<span> &nbsp &nbsp Title: {{ v.0 }} </span><br>
+									<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ v.1 }}</a> <br>
+									<span> &nbsp &nbsp Reading ease score: {{ v.2}} </span><br>
+									<span> &nbsp &nbsp Sentiment: {{ v.3 }} </span> <br>
+									&nbsp &nbsp <img  src="{% static 'images/minus.png' %}" onclick="deletePage('{{ v.1 }}')" alt="red minus" height="4%" width="2%" title="Delete the page."></img>
+								</div>
+								<p class="clear-both"></p>
+							{% endfor %}
+						</div>
+						
+					{% endfor %}
+				{% endif %}
+				<p></p>				
+			</div>
+		</div>
+		
+		
+		<!-- Modal (Add a new category) -->
+		<div id="Add_a_categ" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+
+				<!-- Modal content (adding a new category)-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Add a new category.</h4>
+					</div>
+					<div class="modal-body">
+						Specify a new category:  <input id="newcategoryid" type="text" name="newcategory" autofocus>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="createCategory()">Add</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		
+		<!-- Modal (Change password) -->
+		<div id="change_pass" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Change your password.</h4>
+					</div>
+					<div class="modal-body">
+						<input id="pass1" type="password" name="password1" class="form-control" placeholder="New password*" autofocus>
+						<input id="pass2" type="password" name="password2" class="form-control" placeholder="New password (again)*">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="change_password()">Save</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
 	</body>
 	
 </html>

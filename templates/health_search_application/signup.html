@@ -7,47 +7,42 @@
 	<head>
 		<title>Sign up</title>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="searchapp.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-		<script src="{% static 'js/script.js' %}"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- The browser will (probably) render the width of the page at the width of its own screen -->
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> <!-- Bootstrap (CSS) -->
+		<link rel="stylesheet" href="{% static 'css/searchapp.css' %}" /> <!-- CSS -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> <!-- JQuery -->
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> <!-- Bootstrap (JS) -->
+		<script src="{% static 'js/script.js' %}"></script> <!-- JS -->
 		
 	</head>
 		
-	<body>
-	
-		<style>
-			body{
-				background-image: url("http://img3.goodfon.su/original/2880x1800/e/3e/pose-body-brain-human.jpg");
-				background-repeat:no-repeat;
-				background-size:cover;
-			}
-			div {
-				background-color: #FFFFFF;
-				border-radius: 25px;
-			}
-		</style>
-
+	<body class="login_signup">
 		<h2 align="center">
 
-		<div class="container" style="max-width:400px">
-			<img src="/static/logo.png" alt="HealthMate" height="30%" width="100%">
+		<div class="container">
+			<img src="{% static 'images/logo.png' %}" alt="HealthMate" height="30%" width="100%">
 			<form method="post" class="form-signin" onsubmit="return ValidSignForm(this);">{% csrf_token %}
 				<h2 class="form-signin-heading">Please Sign Up</h2>
 				<input type="text" name="username" class="form-control" placeholder="Username*" autofocus> <font size="2" id="user_error">{{user_error}}</font>
 				<input type="text" name="firstname" class="form-control" placeholder="First name">
 				<input type="text" name="lastname" class="form-control" placeholder="Last name">
-				<input type="password" name="password" class="form-control" placeholder="Password*"> <font size="2" id="password_error"></font>
-				<input type="text" name="email" class="form-control" placeholder="Email*"> <font size="2" id="email_error"></font>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+				<input type="password" name="pass" class="form-control" placeholder="Password*"> <font size="2" id="password_error"></font>
+				<input type="text" name="email" class="form-control" placeholder="Email*"> <font size="2" id="email_error">{{email_error}}</font>
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
 			</form>
 			<p>{{error}}</p>
-		</div> <!-- /container sign  -->
+		</div> <!-- Container with the SIGNUP form -->
 
-		<a href="/searchapp/login" target="_parent"><button type="button" class="btn btn-default">GO BACK</button></a>
+		<a href="/searchapp/login" target="_parent"><button type="button" class="btn btn-default">GO BACK</button></a> <!-- GO BACK to the LOGIN page -->
 
+		<div id="footer">
+			<ul class="ul_top">
+				<li><a onclick="contactus()"><font size="3" id="user_error">Contact</font></a></li>
+				<li><a data-toggle="aboutpopoverup"><font size="3" id="user_error">About</font></a></li>
+				<font size="1" align="center"> Copyright © 2016 K. Rusev, V. Bardarski, J. Yordanova, E. Alexandrova </font>
+			</ul>
+		</div> <!-- Copyright -->
+		</h2>
 	</body>
 
 </html>

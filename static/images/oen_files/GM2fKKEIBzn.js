@@ -1,0 +1,6 @@
+/*!CK:2415118504!*//*1458335884,*/
+
+if (self.CavalryLogger) { CavalryLogger.start_js(["IGemF"]); }
+
+__d('ReactComposerCanvasStore',['ReactComposerCanvasActionType','ReactComposerStoreBase'],function a(b,c,d,e,f,g){var h,i;if(c.__markCompiled)c.__markCompiled();h=babelHelpers.inherits(j,c('ReactComposerStoreBase'));i=h&&h.prototype;function j(){'use strict';var k;i.constructor.call(this,function(){return {shouldShowCanvasSelector:false};},function(l){switch(l.type){case c('ReactComposerCanvasActionType').SHOW_CANVAS_SELECTOR:k&&k.$ReactComposerCanvasStore1(l);break;case c('ReactComposerCanvasActionType').HIDE_CANVAS_SELECTOR:k&&k.$ReactComposerCanvasStore2(l);break;default:break;}});k=this;}j.prototype.$ReactComposerCanvasStore1=function(k){'use strict';var l=k.composerID,m=this.getComposerData(l);m.shouldShowCanvasSelector=true;this.emitChange(l);};j.prototype.$ReactComposerCanvasStore2=function(k){'use strict';var l=k.composerID,m=this.getComposerData(l);m.shouldShowCanvasSelector=false;this.emitChange(l);};j.prototype.shouldShowCanvasSelector=function(k){'use strict';return this.getComposerData(k).shouldShowCanvasSelector;};f.exports=new j();},null);
+__d("XPagesLikeCheckupStateController",["XController"],function a(b,c,d,e,f,g){c.__markCompiled&&c.__markCompiled();f.exports=c("XController").create("\/pages\/like_checkup\/store_state\/",{});},null);

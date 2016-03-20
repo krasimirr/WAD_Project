@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'health_search_application',
+    'health_search_application',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -99,3 +99,9 @@ STATICFILES_DIRS = (
 )
 
 STATIC_URL = '/static/'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'healthmateteam@gmail.com'
+EMAIL_HOST_PASSWORD = 'p0nichki'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
