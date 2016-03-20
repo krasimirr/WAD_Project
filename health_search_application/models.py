@@ -23,6 +23,16 @@ class Page(models.Model):
     def __unicode__(self):
         return self.title
 
+class Contact(models.Model):
+    contact_name = models.CharField(max_length=150, default="")
+    contact_email = models.CharField(max_length=150, default="")
+    contact_message = models.CharField(max_length=500, default="")
+    is_answered = models.BooleanField(default=False)
+    received = models.DateTimeField(auto_now_add=True, default=None)
+
+    def __unicode__(self):
+        return self.contact_email
+
 def hash_username(username):
 	hashed = binascii.crc32(username)
 	return hashed

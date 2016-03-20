@@ -5,7 +5,7 @@ from django.contrib import auth
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
-from health_search_application.models import AppUser, Category, Page
+from health_search_application.models import AppUser, Category, Page, Contact
 from django.contrib.auth.models import User, Permission
 import datetime
 from django.utils.timezone import now as utcnow
@@ -22,44 +22,54 @@ from textstat.textstat import textstat
 from textblob import TextBlob
 import json
 import urllib, urllib2
-from django.utils.html import strip_tags
+from django.contrib.auth.decorators import user_passes_test
 
-# Add your BING_API_KEY
 
+# OUR BING_API_KEY
 BING_API_KEY = 'FitjpCKCS8W+p6jB14n660G3bGC9QTOrcIiPXRb4LwM'
 
 
+# main
 def index(request):
     if request.method=='POST':
 
         categoriesDict={}
         categoriesDict['allCategories']=Category.objects.filter(userName=request.user.username)
 
+        # get the attributes of the result we want to save
         title=request.POST.get('title','')
         url=request.POST.get('url','')
         readingRating=request.POST.get('readingRating','')
         sentimentRating=request.POST.get('sentimentRating','')
+
+        # the category we want to put our result into
         categoryName=request.POST.get('category','')
 
+        # if we have all of the attributes of the result and a category name, then proceed
         if title!='' and url!='' and readingRating!='' and sentimentRating!='' and categoryName!='':
-            
+
+            # if the category does not exist, create it, otherwise extract it from the db
             if not Category.objects.filter(userName=request.user.username, name=categoryName).exists():
                 c = Category(userName=request.user.username, name=categoryName)
                 c.save()
             else:
                 c = Category.objects.get(userName=request.user.username, name=categoryName)
+
+            # if the page has not been saved before, save it
             if not Page.objects.filter(uName=request.user.username, url=url).exists():
                 p = Page(uName=request.user.username, category=c, title=title, url=url, readingRating=readingRating, sentimentRating=sentimentRating)
                 p.save()
             
-        # list of words searched
+        # from string to list of words searched
         searchstr=request.POST.get('search','')
         search=searchstr.split(" ")
 
+        # fill in the dictionaries for each api
         healthDict=healthapif(search)
         medlineDict=medlineapif(search)
         bingDict=bingapif(searchstr)
 
+        # a dictionary, containing all of the results
         allapisDict=healthDict.copy()
         allapisDict.update(medlineDict)
         allapisDict.update(bingDict)
@@ -76,8 +86,12 @@ def index(request):
     else:
 	return HttpResponseRedirect(reverse('login'))
 
+
+# get the result from Health Api and return it as a dictionary
 def healthapif(search):
+    #healthDict
     healthDict={}
+    
     # initial health api form
     health_api="http://healthfinder.gov/developer/Search.xml?api_key=gnviveyezcuamzei&keyword="
 
@@ -93,7 +107,7 @@ def healthapif(search):
 
     root = ET.fromstring(j)
 
-    # get data from Url tags only
+    # get data from 'Url' tags only
     for i in root.iter('Item'):
         title = i[0].text
         url = i[1].text
@@ -119,18 +133,28 @@ def healthapif(search):
 
     return healthDict
 
+
+# get the result from Medline Api and return it as a dictionary
 def medlineapif(search):
+    
     medlineDict={}
+    
+    # initial medline api form
     medline_api="https://wsearch.nlm.nih.gov/ws/query?db=healthTopics&term=%22"
+
+    # construct medline query
     for word in search:
         medline_api+=word+"%20+OR+"
 
+    # remove the last +OR+
     medline_api=medline_api[:-4]
-        
+
+    # fetch the results
     j=requests.get(medline_api).content
 
     root = ET.fromstring(j)
 
+    # get data from 'document' tags only
     for i in root.iter('document'):
         title=str(i[0].text)
         if "span" in title:
@@ -160,6 +184,8 @@ def medlineapif(search):
 
     return medlineDict
 
+
+# get the result from Bing Api and return it as a dictionary
 def bingapif(search_terms):
 
     bingDict={}
@@ -193,7 +219,6 @@ def bingapif(search_terms):
     # The username MUST be a blank string, and put in your API key!
     username = ''
 
-
     # Create a 'password manager' which handles authentication for us.
     password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
     password_mgr.add_password(None, search_url, username, BING_API_KEY)
@@ -224,6 +249,7 @@ def bingapif(search_terms):
     except urllib2.URLError as e:
         print "Error when querying the Bing API: ", e
 
+    # construct the dictionary
     for result in results:
         url = str(result['link'])
         title = result['title']
@@ -234,8 +260,7 @@ def bingapif(search_terms):
         score=textstat.flesch_reading_ease(summary)
         scoreText=readingEaseScore(score)
         bingDict[url].append(str(score)+" ("+scoreText+")")
-
-                
+             
         # Sentiment score
         blob = TextBlob(summary)
         sentimentPolarity = blob.sentiment.polarity
@@ -243,9 +268,10 @@ def bingapif(search_terms):
         sentimentScore="polarity= %.3f subjectivity= %.3f " % (sentimentPolarity, sentimentSubjectivity)
         bingDict[url].append(sentimentScore)
 
-
     return bingDict
 
+
+# find the content of a Health finder page (in order to do the scorings)
 def findContentHealth(url):
     soup = BeautifulSoup.BeautifulSoup(urllib2.urlopen(url).read(),"html.parser")
     result = soup.find("div", attrs={"class":"quickguide_tool_content"})
@@ -259,6 +285,8 @@ def findContentHealth(url):
     except:
         return "empty"
 
+
+# find the content of a Medline page (in order to do the scoring)
 def findContentMedline(url):
     soup = BeautifulSoup.BeautifulSoup(urllib2.urlopen(url).read(),"html.parser")
     result = soup.find("div", attrs={"id":"topic-summary"})
@@ -266,6 +294,8 @@ def findContentMedline(url):
         return "empty"
     return result.text
 
+
+# find the content of a Bing page (in order to do the scoring)
 def findContentBing(url):
     soup = BeautifulSoup.BeautifulSoup(urllib2.urlopen(url).read(),"html.parser")
     result = soup.find("div", attrs={"class":"col col-primary"})
@@ -273,6 +303,8 @@ def findContentBing(url):
         return "empty"
     return result.text
 
+
+# get the text equivalent of a given score
 def readingEaseScore(score):
     if score>=90:
         return "Very Easy"
@@ -291,10 +323,12 @@ def readingEaseScore(score):
     else:
         return "-"
 
-# FILTER BY NAME AND CATEGORY MANIPULATE  FOR THE ADDED DIR !!!!! SELECT !!!!!
+
+# User's profile, return a dictionary with user's data, categories and pages
 def profile(request):
     if request.user.username and request.user.profile.is_app_user:
 
+        # All of the user's data
         userAvatar=request.user.profile.gravatar_url
         userData=[]
         userObj=User.objects.get(username=request.user.username)
@@ -303,8 +337,7 @@ def profile(request):
         userData.append(['Last name: ', userObj.last_name])
         userData.append(['Email: ', userObj.email])
 
-        
-
+        # create/delete a category, delete a page
         if request.method == 'POST':
             nameCategory=request.POST.get('nameCategory','')
             urlPage=request.POST.get('urlPage','')
@@ -319,12 +352,12 @@ def profile(request):
                 p.delete()
 
             if newCategory!='':
-                print "praq"
                 c = Category(userName=request.user.username, name=newCategory)
                 c.save()
             
         catPageDict={}
 
+        # dictionary with keys: the categories and values: the pages
         for c in Category.objects.filter(userName=request.user.username):
             catPageDict[str(c.name)]=[]
 
@@ -346,23 +379,29 @@ def profile(request):
 	return HttpResponseRedirect(reverse('login'))
 
 
+# Sign up
 def signup(request):
     context = {}
     if request.method == 'POST':
+
+        # get all the fields
         username = request.POST.get('username','')
         fname = request.POST.get('firstname','')
         lname = request.POST.get('lastname','')
         password = request.POST.get('password','')
         email = request.POST.get('email','')
 
+        # if the user exists, pick another username
         if username!="" and User.objects.filter(username=username).exists():
             context['user_error']="Please, pick another username."
             return render(request,'health_search_application/signup.html',context)
-        
+
+        # if there is a registered user with the same email, pick another email        
         if username!="" and User.objects.filter(email=email).exists():
             context['email_error']="Please, pick another email."
             return render(request,'health_search_application/signup.html',context)
-        
+
+        # if everything is filled and unique as well as valid, create the user
         if username!="" and password!="" and email!="" and len(username)<=10 and 6<=len(password)<=14 and \
            not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists():
             user = User.objects.create_user(username,email,password)
@@ -374,7 +413,6 @@ def signup(request):
         #if email!="" and validateEmail(email)==False:
             #context['error']="Please, use a valid email."
             #return render(request,'health_search_application/signup.html',context)
-
         
         if user is not None:
             auth.login(request,user)
@@ -399,15 +437,19 @@ def signup(request):
 #    except ValidationError:
 #        return False
 
+
+# Login
 def login(request):
     if request.user.username and request.user.profile.is_app_user:
         return HttpResponseRedirect(reverse('index'))
     context = {'error':''}
 
+    # get the fields
     if request.method == 'POST':
         username = request.POST.get('username','') #return '' if no username
         password = request.POST.get('password','')
 
+        # authenticate the user
 	user = auth.authenticate(username=username,password=password)
 
 	if user is not None:
@@ -421,20 +463,25 @@ def login(request):
 	    context['error'] = 'Wrong username and/or password. Try again.'
 	    return render(request,'health_search_application/login.html',context)
 
-
     context.update(csrf(request))
     return render(request,'health_search_application/login.html',context)
 
 
+# Log out (change the user's field 'is_app_user' to prevent them to access the core pages of the web app
+# Holds for not registered users aswell
 def logout(request):
     cu = request.user.profile
     cu.is_app_user = False
     cu.save()
     return render(request,'health_search_application/logout.html')
 
+
+# Change password
 def changepassword(request):
     if request.user.username and request.user.profile.is_app_user:
         context = {'error':''}
+
+        # get the new password (twice) and update the user's password if the two fields match
         if request.method=="POST":
             passwordnew = request.POST.get('passwordnew','')
             passwordneww = request.POST.get('passwordneww','')
@@ -457,18 +504,45 @@ def changepassword(request):
     else:
         return render(request,'health_search_application/changepassword.html')
 
+
+# Contact us (creates a model with info that is passed from a registered/not registered user
 def contact(request):
     if request.method == 'POST':
-        subject = request.POST.get('name', '')
-        message = request.POST.get('message', '')
+        name = request.POST.get('name', '')
         from_email = request.POST.get('email', '')
-        if subject and message and from_email:
-            try:
-                send_mail(subject, message, from_email, ['admin@example.com'])
-            except BadHeaderError:
-                return HttpResponse('Invalid header found.')
-            return HttpResponseRedirect('/contact/thanks/')
+        message = request.POST.get('message', '')
+        if name and message and from_email:
+            c = Contact(contact_name=name, contact_email=from_email, contact_message=message)
+            c.save()
+            return render(request,'health_search_application/thanks.html')
         else:
             return HttpResponse('Make sure all fields are entered and valid.')
     else:
         return render(request,'health_search_application/contact.html',{})
+
+
+# can be seen from superusers only
+# contact back the user(s)
+# gmail account: healthmateteam@gmail.com
+@user_passes_test(lambda u: u.is_superuser)
+def sendemail(request, *args, **kwargs):
+    if request.method == 'POST' and request.user.username and request.user.profile.is_app_user:
+        email = 'healthmateteam@gmail.com'
+        to_user = request.POST.get('email','')
+        subject = request.POST.get('subject','')
+        message = request.POST.get('message','')
+        
+        if email!='' and to_user!='' and subject!='' and message!='':
+            c = Contact.objects.filter(contact_email=to_user, is_answered=False)
+
+            # if we fetched the contact, send an email and update its field to answered (updates the first unanswered contact from the same user)
+            if len(c)!=0:
+                send_mail(subject, message, email, [to_user])
+                c[0].is_answered=True
+                c[0].save()
+
+                return render(request,'health_search_application/send_email.html', {'sent_or_not': 'Successfully sent.'})
+        
+        return render(request,'health_search_application/send_email.html',{'sent_or_not': 'Could not send it.'})
+    else:
+        return render(request,'health_search_application/send_email.html', {})
