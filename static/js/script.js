@@ -20,6 +20,11 @@ function ValidLogForm(f) {
 // check the SIGNUP form
 function ValidSignForm(f) {
 	
+	var rforeign = /[^\u0000-\u007f]/;
+	if (rforeign.test(f.username.value)) { alert("Please use only latin letters."); return false;}
+	if (rforeign.test(f.pass.value)) { alert("Please use only latin letters."); return false;}
+	if (rforeign.test(f.email.value)) { alert("Please use only latin letters."); return false;}
+	
 	if (f.username.value == "") {document.getElementById("user_error").innerHTML = "Please fill in your username."; return false;}
 	if (f.pass.value == "") {document.getElementById("password_error").innerHTML = "Please fill in your password."; return false;}
 	if (f.email.value == "") {document.getElementById("email_error").innerHTML = "Please fill in your email."; return false;}
@@ -28,6 +33,8 @@ function ValidSignForm(f) {
 	if (f.username.value.length > 12) {document.getElementById("user_error").innerHTML = "Please pick a username that is less than or equal to 12 characters."; return false;}
 	if (f.pass.value.length < 3 || f.password.value.length > 15) {document.getElementById("password_error").innerHTML = "The password should be between 3 and 15 characters."; return false;}
 	if (!(ValidEmail(f.email.value))) {document.getElementById("email_error").innerHTML = "The given email is not valid."; return false;}
+	
+
 	
 	return true; }
 
