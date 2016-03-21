@@ -37,6 +37,7 @@ SETUP INSTRUCTIONS
 http://localhost:8000/
 
 8) Log in as one of the users we created in 5)
+
 /!\ they are all superusers (as well as staff so that the admin page ( http://localhost:8000/admin/login/?next=/admin/ )  can be accessed)
 
 NOTE: in the cmd you can see their username and password:
