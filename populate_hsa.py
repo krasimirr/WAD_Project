@@ -14,10 +14,6 @@ def populate():
     add_user('bob')
     add_user('jen')
 
-    # Print out the users we have added as well as their password
-    for u in User.objects.all():
-        print "Username: "+u.username+" Password: "+u.username
-
 # create three superusers (+staff rights in order to access the admin page)
 def add_user(name):
     # (username, email, password)
@@ -33,6 +29,9 @@ def add_user(name):
         cu = user.profile
         cu.is_app_user = False
         cu.save()
+
+    # Print out the users we have added as well as their password
+    print "Username: "+name+" Password: "+name
 
 
 # Start execution here!
