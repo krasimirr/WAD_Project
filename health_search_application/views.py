@@ -226,7 +226,7 @@ def healthapif(search):
             blob = TextBlob(content)
             sentimentPolarity = blob.sentiment.polarity
             sentimentSubjectivity = blob.sentiment.subjectivity
-            sentimentScore = "polarity= %.3f subjectivity= %.3f " % (sentimentPolarity, sentimentSubjectivity)
+            sentimentScore = "polarity= %.3f (%s), subjectivity= %.3f (%s)" % (sentimentPolarity, polarityScore(sentimentPolarity), sentimentSubjectivity, subjectivityScore(sentimentSubjectivity))
             healthDict[url].append(sentimentScore)
     return healthDict
 
@@ -294,7 +294,7 @@ def medlineapif(search_terms):
         blob = TextBlob(content)
         sentimentPolarity = blob.sentiment.polarity
         sentimentSubjectivity = blob.sentiment.subjectivity
-        sentimentScore = "polarity= %.3f subjectivity= %.3f " % (sentimentPolarity, sentimentSubjectivity)
+        sentimentScore = "polarity= %.3f (%s), subjectivity= %.3f (%s)" % (sentimentPolarity, polarityScore(sentimentPolarity), sentimentSubjectivity, subjectivityScore(sentimentSubjectivity))
         medlineDict[url].append(sentimentScore)
 
     return medlineDict
@@ -379,7 +379,7 @@ def bingapif(search_terms):
         blob = TextBlob(summary)
         sentimentPolarity = blob.sentiment.polarity
         sentimentSubjectivity = blob.sentiment.subjectivity
-        sentimentScore="polarity= %.3f subjectivity= %.3f " % (sentimentPolarity, sentimentSubjectivity)
+        sentimentScore = "polarity= %.3f (%s), subjectivity= %.3f (%s)" % (sentimentPolarity, polarityScore(sentimentPolarity), sentimentSubjectivity, subjectivityScore(sentimentSubjectivity))
         bingDict[url].append(sentimentScore)
 
     return bingDict
@@ -432,6 +432,33 @@ def readingEaseScore(score):
         return "Very Confusing."
     else:
         return "-"
+
+# get the text equivalent of a polarity score
+def polarityScore(score):
+  if -1<=score and score<=-0.6:
+    return "Negative"
+  if -0.59<=score and score<=-0.15:
+    return "Fairly negative"
+  if -0.14<=score and score<=0.14:
+    return "Neutral"
+  if 0.15<=score and score<=0.59:
+    return "Fairly positive"
+  if 0.6<=score and score<=1:
+    return "Positive"
+  else:
+    return "-"
+
+
+# get the text equivalent of a subjectivity score
+def subjectivityScore(score):
+  if 0<=score and score<=0.45:
+    return "Objective"
+  if 0.45<=score and score<=0.55:
+    return "Neutral"
+  if 0.55<=score and score<=1:
+    return "Subjective"
+  else:
+    return "-"
 
 
 
