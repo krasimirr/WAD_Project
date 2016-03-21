@@ -163,7 +163,7 @@ def index(request):
         search=searchstr.split(" ")
 
         # fill in the dictionaries for each api
-        healthDict=healthapif(searchstr)
+        healthDict=healthapif(search)
         medlineDict=medlineapif(search)
         bingDict=bingapif(searchstr)
 
@@ -192,12 +192,12 @@ def index(request):
 # get the result from Health Api and return it as a dictionary
 def healthapif(search):
     healthDict = {}
-    health_api = "http://healthfinder.gov/developer/Search.xml?api_key=gnviveyezcuamzei&keyword=" + search
+    health_api = "http://healthfinder.gov/developer/Search.xml?api_key=gnviveyezcuamzei&keyword="
 
     keywords = " ".join(search)
     search = keywords.replace('"',"%22")
     search = search.replace(' ',"%20")
-
+    health_api += search
 
     j = requests.get(health_api).content
 
