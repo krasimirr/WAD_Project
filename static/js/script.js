@@ -87,6 +87,8 @@ function sendResults(){
 	
 	if (selectedCategory=="specify") {
 		var selectedCategory=document.getElementById("newcategoryid").value;
+		var rforeign = /[^\u0000-\u007f]/;
+		if (rforeign.test(selectedCategory)) { alert("Please use only latin letters."); return false;}
 	}
 
 	if (selectedCategory=='') { alert("Please specify a category name."); return false; }
@@ -146,6 +148,8 @@ function avatar(email) {
 // create a category (make a POST request with AJAX, passing the name of the category)
 function createCategory() {
 	var name=document.getElementById("newcategoryid").value;
+	var rforeign = /[^\u0000-\u007f]/;
+	if (rforeign.test(name)) { alert("Please use only latin letters."); return false;}
 	$.ajax({
 		type: "POST",
         url: "/searchapp/profile",

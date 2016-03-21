@@ -27,7 +27,7 @@
 		<img src="{% static 'images/logo.png' %}" alt="HealthM8" height="10%" width="100%">
 		
 			<div>
-				<form id="searchform" method="post" class="input-area" onsubmit="return latinChecker(this);" >{% csrf_token %}
+				<form id="searchform" method="post" class="input-area" onsubmit="return latinChecker();" >{% csrf_token %}
 					<input id="searcher" type="text" name="search" class="input-box" size="80" placeholder='	Type in symptom/illness (for exact match of a phrase put it into "")' maxlength="210" autofocus>
 					<button class="submit" type="submit" onclick="load()"><p id="search_text">SEARCH</p></button>
 				</form>
