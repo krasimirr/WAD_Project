@@ -132,7 +132,7 @@ def index(request):
         userObject=User.objects.get(username=request.user.username)
 
         categoriesDict={}
-        categoriesDict['allCategories']=Category.objects.filter(userName=userObject)
+        categoriesDict['allCategories']=Category.objects.filter(userName=userObject).order_by('name')
 
         # get the attributes of the result we want to save
         title=request.POST.get('title','')
@@ -521,7 +521,7 @@ def profile(request):
                 pageData.append(str(p.sentimentRating))
                 catPageDict[str(c.name)].append(pageData)
 
-	return render(request, 'health_search_application/profile.html', {'user_categories': catPageDict.iteritems(),
+	return render(request, 'health_search_application/profile.html', {'user_categories': sorted(catPageDict.iteritems()),
                                                                           'keys': catPageDict.keys(),
                                                                           'userData': userData,
                                                                           'avatar': userAvatar,
