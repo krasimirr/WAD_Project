@@ -7,6 +7,14 @@
 /*											SIGNUP, LOGIN, INDEX, PROFILE									 */
 /* ========================================================================================================= */
 
+a {
+	cursor: pointer;
+}
+
+h3 {
+	cursor: pointer;
+}
+
 li {
     float: right;
 }
@@ -17,7 +25,6 @@ li a {
     text-align: center;
     padding: 8px 18px;
     border-radius: 25px;
-    cursor: pointer;
     text-decoration: none !important;
 }
 
