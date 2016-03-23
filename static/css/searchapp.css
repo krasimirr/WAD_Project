@@ -16,9 +16,9 @@ li a {
     color: #666;
     text-align: center;
     padding: 8px 18px;
-    text-decoration: none;
     border-radius: 25px;
     cursor: pointer;
+    text-decoration: none !important;
 }
 
 li a:hover:not(.active) {
