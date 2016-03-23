@@ -11,10 +11,6 @@ a {
 	cursor: pointer;
 }
 
-h3 {
-	cursor: pointer;
-}
-
 li {
     float: right;
 }
@@ -183,6 +179,7 @@ li a.active {
 .profile_cat_name {
 	color: grey;
 	display:inline-block;margin-right:10px;
+	cursor: pointer;
 }
 
 .delete {
