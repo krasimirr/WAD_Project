@@ -44,7 +44,7 @@
 		<div class="profile_category_box">
 			<div id="profile_categories">
 			
-				<h1 align="center"> Categories <img src="{% static 'images/add.png' %}" data-toggle="modal" data-target="#Add_a_categ" alt="red plus" height="3%" width="3%" title="Add a new category."></img> </h1>
+				<h1 align="center"> Categories <img class="add_delete" src="{% static 'images/add.png' %}" data-toggle="modal" data-target="#Add_a_categ" alt="red plus" height="3%" width="3%" title="Add a new category."></img> </h1>
 				<hr id="category_line">
 				
 				<!-- Show the user's categories (and eventually pages if the user clicks on the category's name) -->
@@ -60,7 +60,7 @@
 									<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ v.1 }}</a> <br>
 									<span> &nbsp &nbsp Reading ease score: {{ v.2}} </span><br>
 									<span> &nbsp &nbsp Sentiment: {{ v.3 }} </span> <br>
-									&nbsp &nbsp <img  src="{% static 'images/minus.png' %}" onclick="deletePage('{{ v.1 }}')" alt="red minus" height="4%" width="2%" title="Delete the page."></img>
+									&nbsp &nbsp <img class="add_delete"  src="{% static 'images/minus.png' %}" onclick="deletePage('{{ v.1 }}')" alt="red minus" height="4%" width="2%" title="Delete the page."></img>
 								</div>
 								<p class="clear-both"></p>
 							{% endfor %}
