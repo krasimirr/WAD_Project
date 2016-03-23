@@ -512,7 +512,7 @@ def profile(request):
         for c in Category.objects.filter(userName=User.objects.get(username=request.user.username)):
             catPageDict[str(c.name)]=[]
 
-            pages = Page.objects.filter(uName=request.user.username, category=c)
+            pages = Page.objects.filter(uName=request.user.username, category=c).order_by('title')
             for p in pages:
                 pageData=[]
                 pageData.append(str(p.title))
