@@ -17,7 +17,8 @@ li a {
     text-align: center;
     padding: 8px 18px;
     text-decoration: none;
-	border-radius: 25px;
+    border-radius: 25px;
+    cursor: pointer;
 }
 
 li a:hover:not(.active) {
