@@ -21,12 +21,12 @@
 			
 			<form method="post" class="form-signin" onsubmit="return ValidContactForm(this);"> {% csrf_token %}
 				Your name:<br>
-				<input name="name" size="30" type="text" class="form-control" autofocus><br> <font size="2" id="name_error"></font><br>
+				<input name="name" size="30" type="text" class="form-control" autofocus><br> <p id="name_error"></p><br>
 				Your email:<br>
-				<input name="email" size="30" type="text" class="form-control"><br> <font size="2" id="email_error"></font> <br>
+				<input name="email" size="30" type="text" class="form-control"><br> <p id="email_error"></p> <br>
 				Your message:<br>
 				<textarea name="message" rows="7" cols="30" class="form-control"></textarea><br>
-				<font size="2" id="message_error"></font>
+				<p id="message_error"></p>
 				<button class="btn btn-default btn-sm btn-block" type="submit">SEND</button>
 			</form>
 			

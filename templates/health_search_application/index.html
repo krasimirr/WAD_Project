@@ -10,8 +10,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- The browser will (probably) render the width of the page at the width of its own screen -->
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> <!-- Bootstrap (CSS) -->
 		<link rel="stylesheet" href="{% static 'css/searchapp.css' %}" /> <!-- CSS -->
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> <!-- Autocomplete -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> <!-- JQuery -->
 		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> <!-- Bootstrap (JS) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> <!-- jQuery UI -->
 		<script src="{% static 'js/script.js' %}"></script> <!-- JS -->
 	</head>
 
@@ -51,11 +53,11 @@
 			<div class="line">
 					
 				{% if alllength > 0 %}
-					<p align="center"> There are {{alllength}} results in total for: {{search}} </p>
+					<p class="align_center"> There are {{alllength}} results in total for: {{search}} </p>
 				{% elif alllength = 0 %}
-					<p align="center"> No results found.</p>
+					<p class="align_center"> No results found.</p>
 				{% else %}
-					<p align="center"> </p>
+					<p class="align_center"> </p>
 				{% endif %}
 				
 			</div> <!-- Number of results + the searched text	
@@ -63,7 +65,7 @@
 			<!-- ALL RESULTS -->
 			<div id="1api" class="dict_results" >
 				{% for key, value in allapis %}
-					<div id="result_box">
+					<div class="result_box">
 						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
 						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
 						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
@@ -78,7 +80,7 @@
 			<!-- HEALTH RESULTS -->
 			<div id="2api" class="hidden" >
 				{% for key, value in healthapi %}
-					<div id="result_box">
+					<div class="result_box">
 						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
 						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
 						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
@@ -93,7 +95,7 @@
 			<!-- MEDLINE RESULTS -->
 			<div id="3api" class="hidden" >
 				{% for key, value in medlineapi %}
-					<div id="result_box">
+					<div class="result_box">
 						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
 						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
 						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>
@@ -108,7 +110,7 @@
 			<!-- BING RESULTS -->
 			<div id="4api" class="hidden" >
 				{% for key, value in bingapi %}
-					<div id="result_box">
+					<div class="result_box">
 						<span> &nbsp &nbsp Title: {{ value.0 }} </span><br>
 						<span> &nbsp &nbsp Url: </span> <a href={{ key }} target="_blank"> {{ key }}</a> <br>
 						<span> &nbsp &nbsp Reading ease score: {{ value.1 }} </span><br>

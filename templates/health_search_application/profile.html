@@ -35,7 +35,7 @@
 			<div id="user_data">
 				{% if userData %}
 					{% for value in userData %}
-						<br> <font id="uData"> {{ value.0 }} {{ value.1 }} </font> <br><br>
+						<br> <p></p> <p id="uData"> {{ value.0 }} {{ value.1 }} </p>
 					{% endfor %}
 				{% endif %}
 			</div>
@@ -44,14 +44,14 @@
 		<div class="profile_category_box">
 			<div id="profile_categories">
 			
-				<h1 align="center"> Categories <img class="add_delete" src="{% static 'images/add.png' %}" data-toggle="modal" data-target="#Add_a_categ" alt="red plus" height="3%" width="3%" title="Add a new category."></img> </h1>
+				<h1 class="align_center"> Categories <img class="add_delete" src="{% static 'images/add.png' %}" data-toggle="modal" data-target="#Add_a_categ" alt="red plus" height="3%" width="3%" title="Add a new category."></img> </h1>
 				<hr id="category_line">
 				
 				<!-- Show the user's categories (and eventually pages if the user clicks on the category's name) -->
 				{% if user_categories %}
 					{% for key, value in user_categories %}
 						<h3 id="{{ key }}h1" class="profile_cat_name" title="Click to see the pages in this category." onclick="show('{{ key }}', {{ keys }})"> + {{ key }} </h3>
-						<a  class="same_line2" onclick="deleteCategory('{{ key }}')"> <font class="delete" title="Delete the category."> (delete) </font> </a><br>
+						<a  class="same_line2" onclick="deleteCategory('{{ key }}')"> <p class="delete" title="Delete the category."> (delete) </p> </a><br>
 						
 						<div id="{{ key }}" class="hidden">
 							{% for v in value %}
