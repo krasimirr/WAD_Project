@@ -16,30 +16,29 @@
 	</head>
 	
 	<body class="login_signup">
-		<h2 class="align_center">
+		<br>
 		
-			<div class="container">
-				<img src="{% static 'images/logo.png' %}" alt="HealthMate" height="5%" width="100%">
-				<form method="post" class="form-signin" onsubmit="return ValidLogForm(this);">{% csrf_token %}
-					<h2 class="form-signin-heading">Please Log in</h2>
-					<input type="text" name="username" class="form-control" placeholder="Username*" autofocus> <p id="user_error"></p>
-					<input type="password" name="pass" class="form-control" placeholder="Password*"> <p id="password_error"></p>
-					<button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
-				</form>
-				<p>{{error}}</p>
-				<p>You do not have a profile? You can <a href="/searchapp/signup">Sign up now.</a> </p>
-			</div> <!-- Container with the LOGIN form -->
-			
-			<div class="footer">
-				<ul class="ul_top">
-					<li><a onclick="contactus()"><p class="font_3">Contact</p></a></li>
-					<li><a data-toggle="aboutpopoverup"><p class="font_3">About</p></a></li>
-					<p></p>
-					<p class="font_1"> Copyright © 2016 K. Rusev, V. Bardarski, J. Yordanova, E. Alexandrova </p>
-				</ul>
-			</div> <!-- Copyright -->
-			
-		</h2>
+		<div class="container">
+			<img src="{% static 'images/logo.png' %}" alt="HealthMate" height="5%" width="100%">
+			<form method="post" class="form-signin" onsubmit="return ValidLogForm(this);">{% csrf_token %}
+				<h2 class="form-signin-heading"><p class="align_center">Please Log in</p></h2>
+				<input type="text" name="username" class="form-control" placeholder="Username*" autofocus> <p id="user_error"></p>
+				<input type="password" name="pass" class="form-control" placeholder="Password*"> <p id="password_error"></p>
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+			</form>
+			<p>{{error}}</p>
+			<p>You do not have a profile? You can <a href="/searchapp/signup">Sign up now.</a> </p>
+		</div> <!-- Container with the LOGIN form -->
+		
+		<div class="footer">
+			<ul class="ul_top">
+				<li><a onclick="contactus()"><p class="font_3">Contact</p></a></li>
+				<li><a data-toggle="aboutpopoverup"><p class="font_3">About</p></a></li>
+				<p></p>
+				<p class="font_1"> Copyright © 2016 K. Rusev, V. Bardarski, J. Yordanova, E. Alexandrova </p>
+			</ul>
+		</div> <!-- Copyright -->
+
 	</body>
 	
 </html>
